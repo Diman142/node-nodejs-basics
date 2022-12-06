@@ -6,29 +6,31 @@ import {
     readFileSync,
     writeFileSync
 } from 'node:fs';
-import {
-    dirname
-} from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const copy = async () => {
-    const path = `${dirname('copy.js')}`
+
     try {
-        const fileNames = await readdir('./files');
+        const fileNames = await readdir(`${__dirname}/files`);
         if (fileNames.length === 0) {
             throw new Error('FS operation failed')
         }
 
-        await mkdir('files_copy');
+        await mkdir(`${__dirname}/files_copy`);
 
         fileNames.forEach(name => {
-            const data = readFileSync(`${path}/files/${name}`, {
+            const data = readFileSync(`${__dirname}/files/${name}`, {
                 encoding: 'utf-8'
             })
-            writeFileSync(`${path}/files_copy/${name}`, data)
+            writeFileSync(`${__dirname}/files_copy/${name}`, data)
         })
 
     } catch (err) {
-        throw new Error('FS operation failed')
+        throw new Error(err.message)
     }
 };
 
